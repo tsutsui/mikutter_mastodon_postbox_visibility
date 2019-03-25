@@ -1,0 +1,11 @@
+---
+slug: :worldon_postbox_visibility
+depends:
+  mikutter: 3.8.6
+  plugin:
+    - worldon
+    - mikutter-uwm-hommage
+version: '1.0'
+author: shibafu528
+name: 'Worldon Postbox Visibility'
+description: 'Postboxにトゥートの可視性を設定するボタンを追加します'
