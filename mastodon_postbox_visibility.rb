@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# frozen_string_literal: true
 
 # uwm-hommageでモンキーパッチされたPostBoxをさらに改造するぞ!
 class Gtk::PostBox
@@ -34,7 +35,9 @@ class Gtk::PostBox
     initialize_uwm(*args)
 
     # 公開範囲切り替えボタン
-    add_extra_button(:mastodon_visibility, Gtk::WebIcon.new(Plugin[:mastodon].get_skin("private.png"), 16, 16)) { |e|
+    icon_rect = { width: 16, height: 16 }
+    icon = Gtk::Image.new(Plugin[:mastodon_postbox_visibility].visibility_icon(:default).pixbuf(**icon_rect))
+    add_extra_button(:mastodon_visibility, icon) { |e|
       menu = Gtk::Menu.new
       menu.ssc(:selection_done) {
         menu.destroy
@@ -50,6 +53,7 @@ class Gtk::PostBox
                     item.active = @visibility == nil
                     item.ssc(:activate) {
                       @visibility = nil
+                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:default).pixbuf(**icon_rect)
                     }
                     group = item
                   })
@@ -57,24 +61,28 @@ class Gtk::PostBox
                     item.active = @visibility == :public
                     item.ssc(:activate) {
                       @visibility = :public
+                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:public).pixbuf(**icon_rect)
                     }
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "未収載").tap { |item|
                     item.active = @visibility == :unlisted
                     item.ssc(:activate) {
                       @visibility = :unlisted
+                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:unlisted).pixbuf(**icon_rect)
                     }
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "フォロワー限定").tap { |item|
                     item.active = @visibility == :private
                     item.ssc(:activate) {
                       @visibility = :private
+                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:private).pixbuf(**icon_rect)
                     }
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "ダイレクト").tap { |item|
                     item.active = @visibility == :direct
                     item.ssc(:activate) {
                       @visibility = :direct
+                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:direct).pixbuf(**icon_rect)
                     }
                   })
 
@@ -106,5 +114,24 @@ class Gtk::PostBox
 end
 
 Plugin.create(:mastodon_postbox_visibility) do
+  
+  @skin_fallback_dir = [
+    File.join(spec[:path], 'skin'),
+    File.join(Plugin[:mastodon].spec[:path], 'icon'),
+  ].freeze
+  
+  @icons = {
+    default: 'visibility-default.png',
+    public: 'etc.png',
+    unlisted: 'unlisted.png',
+    private: 'private.png',
+    direct: 'direct.png',
+  }.freeze
 
+  # mastodon pluginのiconディレクトリを含めてSkinを検索し、
+  # Photo modelとして結果を得る
+  def visibility_icon(visibility)
+    ::Skin::photo(@icons[visibility] || @icons[:default], @skin_fallback_dir)
+  end
+  
 end
