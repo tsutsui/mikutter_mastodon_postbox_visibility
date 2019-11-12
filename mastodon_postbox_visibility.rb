@@ -31,12 +31,12 @@ class Gtk::PostBox
   
   alias initialize_uwm initialize
 
-  def initialize(*args)
-    initialize_uwm(*args)
+  def initialize(*args, visibility: nil, **kwrest)
+    initialize_uwm(*args, visibility: visibility, **kwrest)
 
     # 公開範囲切り替えボタン
     icon_rect = { width: 16, height: 16 }
-    icon = Gtk::Image.new(Plugin[:mastodon_postbox_visibility].visibility_icon(:default).pixbuf(**icon_rect))
+    icon = Gtk::Image.new(Plugin[:mastodon_postbox_visibility].visibility_icon(visibility).pixbuf(**icon_rect))
     add_extra_button(:mastodon_visibility, icon) { |e|
       menu = Gtk::Menu.new
       menu.ssc(:selection_done) {
