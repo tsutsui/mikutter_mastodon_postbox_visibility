@@ -108,7 +108,7 @@ class Gtk::PostBox
   def update_visibility_button_state
     if not @extra_buttons[:mastodon_visibility].destroyed?
       current_world, = Plugin.filtering(:world_current, nil)
-      @extra_buttons[:mastodon_visibility].sensitive = current_world.class.slug == :mastodon
+      @extra_buttons[:mastodon_visibility].sensitive = current_world&.class&.slug == :mastodon
     end
   end
 end
