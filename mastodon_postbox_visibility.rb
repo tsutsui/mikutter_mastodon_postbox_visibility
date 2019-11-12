@@ -92,8 +92,13 @@ class Gtk::PostBox
     # World切り替え時にボタンの有効状態を制御
     tag = Plugin[:mastodon_postbox_visibility].handler_tag
     @extra_buttons[:mastodon_visibility].ssc_atonce(:expose_event) {
-      Plugin[:mastodon_postbox_visibility].on_world_change_current(tags: tag) { |world|
-        update_visibility_button_state
+      Plugin[:mastodon_postbox_visibility].tap { |plugin|
+        plugin.on_world_change_current(tags: tag) { |world|
+          update_visibility_button_state
+        }
+        plugin.on_world_after_created(tags: tag) { |world|
+          update_visibility_button_state
+        }
       }
       false
     }
