@@ -51,7 +51,8 @@ class Gtk::PostBox
       group = nil
       menu.append(Gtk::RadioMenuItem.new("デフォルト").tap { |item|
                     item.active = @visibility == nil
-                    item.ssc(:activate) {
+                    item.ssc(:toggled) {
+                      next unless item.active?
                       @visibility = nil
                       icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:default).pixbuf(**icon_rect)
                     }
@@ -59,28 +60,32 @@ class Gtk::PostBox
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "公開").tap { |item|
                     item.active = @visibility == :public
-                    item.ssc(:activate) {
+                    item.ssc(:toggled) {
+                      next unless item.active?
                       @visibility = :public
                       icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:public).pixbuf(**icon_rect)
                     }
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "未収載").tap { |item|
                     item.active = @visibility == :unlisted
-                    item.ssc(:activate) {
+                    item.ssc(:toggled) {
+                      next unless item.active?
                       @visibility = :unlisted
                       icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:unlisted).pixbuf(**icon_rect)
                     }
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "フォロワー限定").tap { |item|
                     item.active = @visibility == :private
-                    item.ssc(:activate) {
+                    item.ssc(:toggled) {
+                      next unless item.active?
                       @visibility = :private
                       icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:private).pixbuf(**icon_rect)
                     }
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "ダイレクト").tap { |item|
                     item.active = @visibility == :direct
-                    item.ssc(:activate) {
+                    item.ssc(:toggled) {
+                      next unless item.active?
                       @visibility = :direct
                       icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:direct).pixbuf(**icon_rect)
                     }
