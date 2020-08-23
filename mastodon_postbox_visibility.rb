@@ -35,8 +35,7 @@ class Gtk::PostBox
     initialize_uwm(*args, visibility: visibility, **kwrest)
 
     # 公開範囲切り替えボタン
-    icon_rect = { width: 16, height: 16 }
-    icon = Gtk::Image.new(Plugin[:mastodon_postbox_visibility].visibility_icon(visibility).pixbuf(**icon_rect))
+    icon = Gtk::Image.new(Plugin[:mastodon_postbox_visibility].visibility_icon(visibility).pixbuf(width: 16, height: 16))
     add_extra_button(:mastodon_visibility, icon) { |e|
       menu = Gtk::Menu.new
       menu.ssc(:selection_done) {
@@ -53,8 +52,7 @@ class Gtk::PostBox
                     item.active = @visibility == nil
                     item.ssc(:toggled) {
                       next unless item.active?
-                      @visibility = nil
-                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:default).pixbuf(**icon_rect)
+                      self.visibility = nil
                     }
                     group = item
                   })
@@ -62,32 +60,28 @@ class Gtk::PostBox
                     item.active = @visibility == :public
                     item.ssc(:toggled) {
                       next unless item.active?
-                      @visibility = :public
-                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:public).pixbuf(**icon_rect)
+                      self.visibility = :public
                     }
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "未収載").tap { |item|
                     item.active = @visibility == :unlisted
                     item.ssc(:toggled) {
                       next unless item.active?
-                      @visibility = :unlisted
-                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:unlisted).pixbuf(**icon_rect)
+                      self.visibility = :unlisted
                     }
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "フォロワー限定").tap { |item|
                     item.active = @visibility == :private
                     item.ssc(:toggled) {
                       next unless item.active?
-                      @visibility = :private
-                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:private).pixbuf(**icon_rect)
+                      self.visibility = :private
                     }
                   })
       menu.append(Gtk::RadioMenuItem.new(group, "ダイレクト").tap { |item|
                     item.active = @visibility == :direct
                     item.ssc(:toggled) {
                       next unless item.active?
-                      @visibility = :direct
-                      icon.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(:direct).pixbuf(**icon_rect)
+                      self.visibility = :direct
                     }
                   })
 
@@ -113,6 +107,14 @@ class Gtk::PostBox
     Delayer.new {
       update_visibility_button_state
     }
+  end
+
+  def visibility=(new_value)
+    @visibility = new_value
+    if not @extra_buttons[:mastodon_visibility].destroyed?
+      @extra_buttons[:mastodon_visibility].child.pixbuf = Plugin[:mastodon_postbox_visibility].visibility_icon(new_value || :default)
+                                                            .pixbuf(width: 16, height: 16)
+    end
   end
 
   def update_visibility_button_state
@@ -143,5 +145,23 @@ Plugin.create(:mastodon_postbox_visibility) do
   def visibility_icon(visibility)
     ::Skin::photo(@icons[visibility] || @icons[:default], @skin_fallback_dir)
   end
-  
+
+  {
+    default: 'デフォルト',
+    public: '公開',
+    unlisted: '未収載',
+    private: 'フォロワー限定',
+    direct: 'ダイレクト'
+  }.each do |visibility, label|
+    command(:"mastodon_postbox_visibility_#{visibility}",
+            name: "公開範囲を#{label}に変更",
+            condition: ->(opt) { mastodon?(opt.world) },
+            visible: false,
+            icon: visibility_icon(visibility),
+            role: :postbox) do |opt|
+      i_postbox = opt.widget
+      postbox, = Plugin.filtering(:gui_get_gtk_widget, i_postbox)
+      postbox.visibility = visibility == :default ? nil : visibility
+    end
+  end
 end
