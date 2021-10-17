@@ -3,6 +3,7 @@ slug: :mastodon_postbox_visibility
 depends:
   mikutter: 3.9.0
   plugin:
+    - mastodon_gtk
     - mikutter-uwm-hommage
 version: '1.2'
 author: shibafu528
