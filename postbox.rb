@@ -73,11 +73,8 @@ class Gtk::PostBox
     post_box = generate_box_org
 
     # 追加ウィジェットを填めるボックスを追加
-    @extra_button_area = if post_box.orientation.respond_to?(:horizontal) # たぶん正しくなくて根本から見直す必要があると思われる
-      post_box
-    else
-      post_box.children[0]
-    end
+    # mikutter_gtk3 の generate_box は Gtk::Grid で、一番上が投稿欄。
+    @extra_button_area = post_box.get_child_at(0, 0)
 
     @extra_box.add(post_box)
   end
