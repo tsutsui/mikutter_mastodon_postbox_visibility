@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 # frozen_string_literal: true
 
-require_relative 'postbox'
+# uwm-hommageがインストールされている場合は先にロードする、無い場合はPostBoxにパッチを当てる
+unless Miquire::Plugin.load('mikutter-uwm-hommage')
+  require_relative 'postbox'
+end
 
 # uwm-hommageでモンキーパッチされたPostBoxをさらに改造するぞ!
 class Gtk::PostBox
