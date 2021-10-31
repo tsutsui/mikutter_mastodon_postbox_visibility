@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # frozen_string_literal: true
 
+require_relative 'postbox'
+
 # uwm-hommageでモンキーパッチされたPostBoxをさらに改造するぞ!
 class Gtk::PostBox
   alias start_post_uwm start_post
