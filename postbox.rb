@@ -69,7 +69,7 @@ class Gtk::PostBox
   alias generate_box_org generate_box
 
   def generate_box
-    @extra_box = Gtk::VBox.new(false)
+    @extra_box = Gtk::Box.new(:vertical)
     post_box = generate_box_org
 
     # 追加ウィジェットを填めるボックスを追加
