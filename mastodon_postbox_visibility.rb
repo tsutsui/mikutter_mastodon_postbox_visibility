@@ -50,7 +50,7 @@ class Gtk::PostBox
       }
 
       group = nil
-      menu.append(Gtk::RadioMenuItem.new("デフォルト").tap { |item|
+      menu.append(Gtk::RadioMenuItem.new(nil, "デフォルト").tap { |item|
                     item.active = @visibility == nil
                     item.ssc(:toggled) {
                       next unless item.active?
@@ -92,7 +92,7 @@ class Gtk::PostBox
 
     # World切り替え時にボタンの有効状態を制御
     tag = Plugin[:mastodon_postbox_visibility].handler_tag
-    @extra_buttons[:mastodon_visibility].ssc_atonce(:expose_event) {
+    @extra_buttons[:mastodon_visibility].ssc_atonce(:realize) {
       Plugin[:mastodon_postbox_visibility].tap { |plugin|
         plugin.on_world_change_current(tags: tag) { |world|
           update_visibility_button_state
