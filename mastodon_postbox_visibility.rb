@@ -129,8 +129,7 @@ Plugin.create(:mastodon_postbox_visibility) do
   
   @skin_fallback_dir = [
     File.join(spec[:path], 'skin'),
-    Plugin.instance_exist?(:mastodon_gtk) ? File.join(Plugin[:mastodon_gtk].spec[:path], 'icon') : nil,
-    File.join(Plugin[:mastodon].spec[:path], 'icon'),
+    File.join(Plugin[:mastodon_gtk].spec[:path], 'icon'),
   ].compact.freeze
   
   @icons = {
